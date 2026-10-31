@@ -78,7 +78,7 @@
 
     /* Welcome / Sign-in / Registration */
     .auth-page { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
-    .auth-left { background: linear-gradient(145deg, #003E93 0%, #004C98 64%, #0075B5 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 48px clamp(30px, 7vw, 100px); color: white; position: relative; overflow: hidden; }
+    .auth-left { background: linear-gradient(145deg, #003E93 0%, #004C98 64%, #0075B5 100%); display: flex; flex-direction: column; justify-content: flex-start; padding: 48px clamp(30px, 7vw, 100px); color: white; position: relative; overflow: hidden; }
     .auth-left::before { content: ""; position: absolute; border: 80px solid rgba(0,198,254,.13); border-radius: 50%; width: 440px; height: 440px; right: -290px; top: 13%; }
     .auth-left::after { content: ""; position: absolute; background: var(--yellow); border-radius: 50%; width: 18px; height: 18px; right: 20%; bottom: 24%; }
     .auth-logo-box { display: inline-flex; background: white; border-radius: 13px; padding: 10px 14px; width: 154px; position: relative; }
@@ -86,20 +86,16 @@
     .auth-tag { margin-bottom: 25px; color: #92E7FF; font-size: 12px; letter-spacing: 2px; font-weight: bold; }
     .auth-left h1 { font-size: clamp(35px, 4.5vw, 58px); max-width: 560px; line-height: 1.09; margin-bottom: 20px; }
     .auth-left .subline { max-width: 460px; color: #D7EDFF; font-size: 17px; }
+    /* Center the message while keeping the UC logo in the upper-left corner. */
+    .auth-intro { margin: auto 0; width: 100%; position: relative; z-index: 1; }
     .auth-features { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 35px; }
     .auth-feature { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.16); padding: 11px 13px; border-radius: 9px; font-size: 13px; }
-    .auth-bottom { color: #D3E8FE; font-size: 12px; position: relative; }
     .auth-right { padding: 38px 24px; display: flex; align-items: center; justify-content: center; }
     .auth-form-wrap { width: 100%; max-width: 430px; }
     .auth-form-wrap h2 { font-size: 29px; margin: 8px 0 9px; }
     .auth-form-wrap .intro { margin: 0 0 25px; color: var(--muted); }
     .auth-form-wrap .btn { margin-top: 3px; }
     .auth-link { border: 0; color: var(--blue); background: transparent; font-weight: 800; padding: 5px; }
-    .demo-box { border: 1px solid #D3E1EE; background: #F8FBFF; padding: 16px; border-radius: 12px; margin-top: 21px; }
-    .demo-box h4 { margin: 0 0 9px; }
-    .demo-buttons { display: flex; gap: 7px; flex-wrap: wrap; }
-    .demo-buttons button { flex: 1; }
-    .auth-footnote { color: #69788A; font-size: 12px; margin-top: 17px; line-height: 1.6; }
 
     /* Main application layout */
     .app { display: flex; min-height: 100vh; }
@@ -223,6 +219,7 @@
     @media (max-width: 800px) {
       .auth-page { grid-template-columns: 1fr; }
       .auth-left { min-height: 280px; padding: 30px 24px; }
+      .auth-intro { margin: 28px 0 0; }
       .auth-left h1 { font-size: 36px; }
       .auth-features, .auth-bottom, .auth-left::before { display: none; }
       .auth-right { padding: 25px 20px 55px; }
@@ -387,6 +384,7 @@
     <symbol id="si-whisk" viewBox="0 0 24 24"><path d="M12.8991 15.1272L6.85993 21.1662C5.74815 22.2779 3.94561 22.2779 2.83383 21.1662C1.72206 20.0545 1.72206 18.252 2.83383 17.1402L8.87298 11.1013M20.5484 3.45154C21.7565 4.65961 19.0984 8.12289 17.3278 9.89336C15.5573 11.6638 11.2887 15.1271 10.0806 13.9191M20.5484 3.45154C19.3403 2.24348 15.8775 4.90212 14.1069 6.67259C12.3364 8.44307 8.87246 12.711 10.0806 13.9191M20.5484 3.45154C22.772 5.67502 22.3733 9.67865 19.8158 12.236C17.2584 14.7934 12.3041 16.1425 10.0806 13.9191M20.5484 3.45154C18.3249 1.22806 14.3211 1.62672 11.7636 4.18407C9.2062 6.74142 7.85702 11.6956 10.0806 13.9191" stroke="currentColor" stroke-width="1.5"/></symbol>
     <symbol id="si-tea" viewBox="0 0 24 24"><path d="M2.3153 12.6978C2.26536 12.2706 2.2404 12.057 2.2509 11.8809C2.30599 10.9577 2.98677 10.1928 3.89725 10.0309C4.07094 10 4.286 10 4.71612 10H15.2838C15.7139 10 15.929 10 16.1027 10.0309C17.0132 10.1928 17.694 10.9577 17.749 11.8809C17.7595 12.057 17.7346 12.2706 17.6846 12.6978L17.284 16.1258C17.1031 17.6729 16.2764 19.0714 15.0081 19.9757C14.0736 20.6419 12.9546 21 11.8069 21H8.19303C7.04537 21 5.9263 20.6419 4.99182 19.9757C3.72352 19.0714 2.89681 17.6729 2.71598 16.1258L2.3153 12.6978Z" stroke="currentColor" stroke-width="1.5"/><path d="M17 17H19C20.6569 17 22 15.6569 22 14C22 12.3431 20.6569 11 19 11H17.5M10.0002 2C9.44787 2.55228 9.44787 3.44772 10.0002 4C10.5524 4.55228 10.5524 5.44772 10.0002 6M5 7.5L5.11612 7.38388C5.62328 6.87671 5.68035 6.0738 5.25 5.5C4.81965 4.9262 4.87671 4.12329 5.38388 3.61612L5.5 3.5M14.5 7.5L14.6161 7.38388C15.1233 6.87671 15.1803 6.0738 14.75 5.5C14.3197 4.9262 14.3767 4.12329 14.8839 3.61612L15 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="si-bell" viewBox="0 0 24 24"><path d="M18.7491 9.70957V9.00497C18.7491 5.13623 15.7274 2 12 2C8.27256 2 5.25087 5.13623 5.25087 9.00497V9.70957C5.25087 10.5552 5.00972 11.3818 4.5578 12.0854L3.45036 13.8095C2.43882 15.3843 3.21105 17.5249 4.97036 18.0229C9.57274 19.3257 14.4273 19.3257 19.0296 18.0229C20.789 17.5249 21.5612 15.3843 20.5496 13.8095L19.4422 12.0854C18.9903 11.3818 18.7491 10.5552 18.7491 9.70957Z" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 19C8.15503 20.7478 9.92246 22 12 22C14.0775 22 15.845 20.7478 16.5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="si-ladle" viewBox="0 0 24 24"><path d="M2 5.68421C2 3.64948 3.64948 2 5.68421 2C7.71894 2 9.36842 3.64948 9.36842 5.68421V14.6316V15.6842C9.36842 19.1723 12.1961 22 15.6842 22C19.1723 22 22 19.1723 22 15.6842V14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M22 14.5C22 15.8807 19.0539 17 16 17C12.9461 17 9.5 15.8807 9.5 14.5C9.5 13.1193 12.9461 12 16 12C19.0539 12 22 13.1193 22 14.5Z" stroke="currentColor" stroke-width="1.5"/></symbol>
   </svg>
   
   <div id="app"></div>
@@ -443,7 +441,8 @@
     var users = loadData("uc_users_v1", defaultUsers);
     var menu = loadData("uc_menu_v1", defaultMenu);
     var orders = loadData("uc_orders_v1", []);
-    var currentUserId = loadData("uc_current_user_v1", null);
+    // A fresh visit requires manual sign-in, including for classroom demo accounts.
+    localStorage.removeItem("uc_current_user_v1");
     var currentUser = null;
     var cart = [];
     var currentPage = "dashboard";
@@ -465,7 +464,6 @@
       localStorage.setItem("uc_users_v1", JSON.stringify(users));
       localStorage.setItem("uc_menu_v1", JSON.stringify(menu));
       localStorage.setItem("uc_orders_v1", JSON.stringify(orders));
-      localStorage.setItem("uc_current_user_v1", JSON.stringify(currentUser ? currentUser.id : null));
     }
 
     function findUser(id) {
@@ -499,7 +497,7 @@
 
     // Render a Solar icon. Shapes are stored in this HTML file above.
     function solarIcon(name, extraClass) {
-      var names = ["bag", "whisk", "chef", "donut", "cup", "tea", "cart", "orders",
+      var names = ["bag", "whisk", "ladle", "chef", "donut", "cup", "tea", "cart", "orders",
                    "user", "logout", "search", "hamburger", "check", "plus",
                    "clock", "bell"];
       if (names.indexOf(name) === -1) name = "bag";
@@ -702,14 +700,6 @@
       showToast("Incorrect email or password. Please try again.", true);
     }
 
-    function fillDemo(role) {
-      var email = role + "@uc.edu.ph";
-      var password = role === "student" ? "Student123" : role === "staff" ? "Staff123" : "Admin123";
-      document.getElementById("login-email").value = email;
-      document.getElementById("login-password").value = password;
-      showToast("Demo account filled. Select Sign In.");
-    }
-
     function register(event) {
       event.preventDefault();
       var name = document.getElementById("register-name").value.trim();
@@ -857,18 +847,15 @@
           '<form onsubmit="login(event)"><div class="form-field"><label for="login-email">Email Address</label><input type="email" id="login-email" autocomplete="username" required placeholder="Enter your email"></div>' +
           '<div class="form-field"><label for="login-password">Password</label><input type="password" id="login-password" autocomplete="current-password" required placeholder="Enter password"></div>' +
           '<button class="btn btn-primary btn-block" type="submit">Sign In</button></form>' +
-          '<p class="center muted small">New student? <button class="auth-link" onclick="showAuth(\'register\')">Create an Account</button></p>' +
-          '<div class="demo-box"><h4>Try a demo account</h4><p class="small muted" style="margin:0 0 12px">Select a role to fill the sign-in form:</p>' +
-          '<div class="demo-buttons"><button class="btn btn-outline btn-sm" onclick="fillDemo(\'student\')">Student</button>' +
-          '<button class="btn btn-outline btn-sm" onclick="fillDemo(\'staff\')">Staff</button><button class="btn btn-outline btn-sm" onclick="fillDemo(\'admin\')">Admin</button></div></div>';
+          '<p class="center muted small">New student? <button class="auth-link" onclick="showAuth(\'register\')">Create an Account</button></p>';
       }
       return '<div class="auth-page"><section class="auth-left"><div class="auth-logo-box"><img class="uc-logo" alt="University of Cebu logo" src="' + logoImage + '"></div>' +
-        '<div><div class="auth-tag">CAMPUS FOOD ORDERING SYSTEM</div><h1>Good food.<br>Better campus days.</h1>' +
+        '<div class="auth-intro"><div class="auth-tag">CAMPUS FOOD ORDERING SYSTEM</div><h1>Good food.<br>Better campus days.</h1>' +
         '<p class="subline">Browse affordable meals, order ahead, and pick up your food at the campus canteen.</p>' +
-        '<div class="auth-features"><span class="auth-feature">' + solarIcon("whisk") + ' Fresh campus meals</span><span class="auth-feature">' + solarIcon("cart") + ' Easy ordering</span><span class="auth-feature">' + solarIcon("check") + ' Order tracking</span></div></div>' +
-        '<div class="auth-bottom">Inspired by the University of Cebu visual identity · Student prototype</div></section>' +
+        '<div class="auth-features"><span class="auth-feature">' + solarIcon("ladle") + ' Fresh campus meals</span><span class="auth-feature">' + solarIcon("cart") + ' Easy ordering</span><span class="auth-feature">' + solarIcon("check") + ' Order tracking</span></div></div>' +
+        '</section>' +
         '<section class="auth-right"><div class="auth-form-wrap">' + form +
-        '<p class="auth-footnote">Classroom-only demonstration. Accounts are stored locally in your browser, not on a secure server. Do not use your real password or personal student information.</p></div></section></div>';
+        '</div></section></div>';
     }
 
     function renderCurrentPage() {
@@ -1380,7 +1367,8 @@
     }
 
     // 11. Start the application
-    currentUser = findUser(currentUserId);
+    // Do not automatically resume an earlier user account on refresh.
+    currentUser = null;
     renderApp();
   </script>
 </body>
