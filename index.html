@@ -1876,25 +1876,7 @@
   <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script>
-    /* ---------------------------------------------------------
-           UC Campus Canteen - Student project demonstration
-
-           HOW TO EXPLAIN THE CODE IN CLASS:
-           1. renderApp() draws the screen that the user should see.
-           2. login() checks credentials; initializeApp() restores a saved login.
-           3. menu and cart functions choose food and calculate the total.
-           4. order functions record purchases and update their status.
-           5. loadData() and saveData() save arrays and objects in the browser.
-           Every section uses functions, variables, loops, and if-statements.
-           Browser password hashing is the one advanced safety-related feature.
-
-           This project uses only basic JavaScript and localStorage.
-           It needs no server or database. Internet is needed for food photos.
-           Accounts and permissions are only a classroom simulation.
-           PBKDF2 hashes replace plaintext passwords in browser storage.
-           Restored browser session markers are NOT server-validated.
-           DO NOT enter real passwords or private student information.
-           --------------------------------------------------------- */
+    
     // 1. Starting menu and sample demonstration accounts
     var defaultMenu = [
         {
@@ -2178,83 +2160,59 @@
     var samplePhotos = [
         {
             "file": "Chicken Adobo with Rice.jpg",
-            "credit": "Rica Rentutar",
-            "license": "CC BY 4.0"
         },
         {
             "file": "Siomai rice.jpg",
-            "credit": "Aerous",
-            "license": "CC BY-SA 4.0"
         },
         {
             "file": "Fried chicken and rice.jpg",
-            "credit": "Aerous",
-            "license": "CC BY-SA 4.0"
         },
         {
             "file": "Pancit Canton in white plate.jpg",
-            "credit": "Aerous",
-            "license": "CC BY-SA 4.0"
         },
         {
             "file": "Tuna Sandwich.jpg",
-            "credit": "Aerous",
-            "license": "CC BY-SA 4.0"
         },
         {
             "file": "A cheeseburger.jpg",
-            "credit": "Corn cheese",
-            "license": "CC0 1.0"
         },
         {
             "file": "Food photography fries.jpg",
-            "credit": "Santhosh annakili",
-            "license": "CC0 1.0"
         },
         {
             "file": "Iced tea.jpg",
-            "credit": "National Cancer Institute",
-            "license": "Public domain"
         },
         {
             "file": "Plastic Water Bottle.jpg",
-            "credit": "Kykywinks",
-            "license": "CC BY-SA 4.0"
         },
         {
             "file": "Mango Shake.JPG",
-            "credit": "Miansari66",
-            "license": "CC0 1.0"
         },
         {
             "file": "Chocolatebrownie.JPG",
-            "credit": "Ɱ",
-            "license": "CC BY-SA 3.0"
         },
         {
             "file": "Turon na Saging.jpg",
-            "credit": "Herbertkikoy",
-            "license": "CC BY-SA 4.0"
         }
     ];
     /*
        Photo source acknowledgements (kept in the HTML source rather than the profile UI).
        Original food photographs are hosted by Wikimedia Commons.
        File pages contain full license terms and any modification requirements.
-       Solar Linear icons: 480 Design, CC BY 4.0 — https://solar-icons.dev/icons
+       Solar Linear icons: 480 Design — https://solar-icons.dev/icons
        Dashboard hero food illustrations: original AI-generated visuals.
-       Chicken Adobo with Rice.jpg — Rica Rentutar (CC BY 4.0) — https://commons.wikimedia.org/wiki/File:Chicken_Adobo_with_Rice.jpg
-       Siomai rice.jpg — Aerous (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Siomai_rice.jpg
-       Fried chicken and rice.jpg — Aerous (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Fried_chicken_and_rice.jpg
-       Pancit Canton in white plate.jpg — Aerous (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Pancit_Canton_in_white_plate.jpg
-       Tuna Sandwich.jpg — Aerous (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Tuna_Sandwich.jpg
-       A cheeseburger.jpg — Corn cheese (CC0 1.0) — https://commons.wikimedia.org/wiki/File:A_cheeseburger.jpg
-       Food photography fries.jpg — Santhosh annakili (CC0 1.0) — https://commons.wikimedia.org/wiki/File:Food_photography_fries.jpg
-       Iced tea.jpg — National Cancer Institute (Public domain) — https://commons.wikimedia.org/wiki/File:Iced_tea.jpg
-       Plastic Water Bottle.jpg — Kykywinks (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Plastic_Water_Bottle.jpg
-       Mango Shake.JPG — Miansari66 (CC0 1.0) — https://commons.wikimedia.org/wiki/File:Mango_Shake.JPG
-       Chocolatebrownie.JPG — Ɱ (CC BY-SA 3.0) — https://commons.wikimedia.org/wiki/File:Chocolatebrownie.JPG
-       Turon na Saging.jpg — Herbertkikoy (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Turon_na_Saging.jpg
+       Chicken Adobo with Rice.jpg — https://commons.wikimedia.org/wiki/File:Chicken_Adobo_with_Rice.jpg
+       Siomai rice.jpg — https://commons.wikimedia.org/wiki/File:Siomai_rice.jpg
+       Fried chicken and rice.jpg — https://commons.wikimedia.org/wiki/File:Fried_chicken_and_rice.jpg
+       Pancit Canton in white plate.jpg — https://commons.wikimedia.org/wiki/File:Pancit_Canton_in_white_plate.jpg
+       Tuna Sandwich.jpg — https://commons.wikimedia.org/wiki/File:Tuna_Sandwich.jpg
+       A cheeseburger.jpg — https://commons.wikimedia.org/wiki/File:A_cheeseburger.jpg
+       Food photography fries.jpg — https://commons.wikimedia.org/wiki/File:Food_photography_fries.jpg
+       Iced tea.jpg — https://commons.wikimedia.org/wiki/File:Iced_tea.jpg
+       Plastic Water Bottle.jpg — https://commons.wikimedia.org/wiki/File:Plastic_Water_Bottle.jpg
+       Mango Shake.JPG — https://commons.wikimedia.org/wiki/File:Mango_Shake.JPG
+       Chocolatebrownie.JPG — https://commons.wikimedia.org/wiki/File:Chocolatebrownie.JPG
+       Turon na Saging.jpg — https://commons.wikimedia.org/wiki/File:Turon_na_Saging.jpg
     */
     function samplePhotoFor(food) {
         // The default demo IDs stay the same even if a previous menu was saved.
