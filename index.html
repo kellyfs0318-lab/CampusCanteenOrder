@@ -6,6 +6,10 @@
   <meta name="theme-color" content="#004C98">
   <title>UC Campus Canteen | Food Ordering</title>
   <style>
+    /* ---------------------------------------------------------
+    UC Campus Canteen - Simple CSS, no outside libraries
+    Colors inspired by the University of Cebu logo.
+    --------------------------------------------------------- */
     :root {
       --blue: #004C98;
       --dark-blue: #003E93;
@@ -613,6 +617,8 @@
     .top-right {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
+      margin-left: auto;
       gap: 12px;
     }
 
@@ -1870,7 +1876,25 @@
   <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script>
-    
+    /* ---------------------------------------------------------
+           UC Campus Canteen - Student project demonstration
+
+           HOW TO EXPLAIN THE CODE IN CLASS:
+           1. renderApp() draws the screen that the user should see.
+           2. login() checks credentials; initializeApp() restores a saved login.
+           3. menu and cart functions choose food and calculate the total.
+           4. order functions record purchases and update their status.
+           5. loadData() and saveData() save arrays and objects in the browser.
+           Every section uses functions, variables, loops, and if-statements.
+           Browser password hashing is the one advanced safety-related feature.
+
+           This project uses only basic JavaScript and localStorage.
+           It needs no server or database. Internet is needed for food photos.
+           Accounts and permissions are only a classroom simulation.
+           PBKDF2 hashes replace plaintext passwords in browser storage.
+           Restored browser session markers are NOT server-validated.
+           DO NOT enter real passwords or private student information.
+           --------------------------------------------------------- */
     // 1. Starting menu and sample demonstration accounts
     var defaultMenu = [
         {
@@ -2694,13 +2718,13 @@
         var html = '<div class="app"><div class="overlay" onclick="toggleMobileMenu()"></div>' +
             '<aside class="sidebar" id="app-sidebar" role="navigation" aria-label="Application navigation">' +
                 '<div class="brand"><div class="brand-mark"><img class="uc-logo" alt="University of Cebu logo" src="' + logoImage + '"></div>' +
-            '<div class="brand-name">UC Canteen<span class="brand-sub">Campus Food Ordering</span></div></div>' +
+            '<div class="brand-name">UC Canteen<span class="brand-sub">Food Ordering</span></div></div>' +
             '<div class="nav-caption">Main Navigation</div>' + navigation +
-            '<div class="sidebar-bottom"><div class="sidebar-user"><div class="avatar">' + initials(currentUser.name) + '</div><div><strong>' + escapeHTML(currentUser.name) + '</strong><small>' + currentUser.role + '</small></div></div>' +
+            '<div class="sidebar-bottom"><div class="sidebar-user"><div class="avatar">' + initials(currentUser.name) + '</div><div><strong>' + escapeHTML(currentUser.name) + '</strong></div></div>' +
             '<button class="nav-button" onclick="logout()"><span class="nav-icon">' + solarIcon('logout') + '</span>Sign Out</button></div></aside>' +
             '<main class="main"><header class="topbar"><div class="button-row">' +
                 '<button class="hamburger" aria-label="Open menu" aria-controls="app-sidebar" aria-expanded="false" onclick="toggleMobileMenu()">' + solarIcon("hamburger") + '</button><div><div class="top-label">University of Cebu / Campus Services</div><h2>' + pageTitle() + '</h2></div></div>' +
-            '<div class="top-right"><span class="top-date">' + new Date().toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" }) + '</span><span class="role-chip">' + currentUser.role + '</span><div class="avatar">' + initials(currentUser.name) + '</div></div></header>' +
+            '<div class="top-right"><span class="top-date">' + new Date().toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" }) + '</span><span class="role-chip">' + currentUser.role + '</span></div></header>' +
             '<div class="content">' + renderCurrentPage() + '</div></main></div>';
         app.innerHTML = html;
         if (currentPage === "menu") {
