@@ -349,12 +349,6 @@
       width: 133px; height: 106px; left: 0; bottom: 0;
       transform: rotate(-12deg);
     }
-    .profile-credits {
-      max-width: 620px; margin-top: 16px; font-size: 12px; color: var(--muted);
-    }
-    .profile-credits > details > summary { cursor: pointer; color: var(--blue); font-weight: 700; }
-    .profile-credits a { color: var(--blue); }
-    .profile-credits .photo-credits { margin-top: 12px; }
     @media (max-width: 900px) {
       .hero-dish-collage { flex-basis: 205px; width: 205px; height: 145px; }
       .hero-dish-primary { width: 151px; height: 128px; }
@@ -395,6 +389,15 @@
   <script>
     /* ---------------------------------------------------------
        UC Campus Canteen - Student project demonstration
+
+       HOW TO EXPLAIN THE CODE IN CLASS:
+       1. renderApp() draws the screen that the user should see.
+       2. login() checks credentials; initializeApp() restores a saved login.
+       3. menu and cart functions choose food and calculate the total.
+       4. order functions record purchases and update their status.
+       5. loadData() and saveData() save arrays and objects in the browser.
+       Every section uses functions, variables, loops, and if-statements.
+       Browser password hashing is the one advanced safety-related feature.
 
        This project uses only basic JavaScript and localStorage.
        It needs no server or database. Internet is needed for food photos.
@@ -441,6 +444,8 @@
     }
 
     // 2. Save / load basic application data
+    // localStorage stores text, so JSON converts arrays and objects into text.
+    // Reading JSON converts that text back into arrays and objects.
     function loadData(key, defaultValue) {
       var saved = storageGet(key);
       if (saved === null) {
@@ -604,6 +609,26 @@
       }
 ];
 
+    /*
+       Photo source acknowledgements (kept in the HTML source rather than the profile UI).
+       Original food photographs are hosted by Wikimedia Commons.
+       File pages contain full license terms and any modification requirements.
+       Solar Linear icons: 480 Design, CC BY 4.0 — https://solar-icons.dev/icons
+       Dashboard hero food illustrations: original AI-generated visuals.
+       Chicken Adobo with Rice.jpg — Rica Rentutar (CC BY 4.0) — https://commons.wikimedia.org/wiki/File:Chicken_Adobo_with_Rice.jpg
+       Siomai rice.jpg — Aerous (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Siomai_rice.jpg
+       Fried chicken and rice.jpg — Aerous (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Fried_chicken_and_rice.jpg
+       Pancit Canton in white plate.jpg — Aerous (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Pancit_Canton_in_white_plate.jpg
+       Tuna Sandwich.jpg — Aerous (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Tuna_Sandwich.jpg
+       A cheeseburger.jpg — Corn cheese (CC0 1.0) — https://commons.wikimedia.org/wiki/File:A_cheeseburger.jpg
+       Food photography fries.jpg — Santhosh annakili (CC0 1.0) — https://commons.wikimedia.org/wiki/File:Food_photography_fries.jpg
+       Iced tea.jpg — National Cancer Institute (Public domain) — https://commons.wikimedia.org/wiki/File:Iced_tea.jpg
+       Plastic Water Bottle.jpg — Kykywinks (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Plastic_Water_Bottle.jpg
+       Mango Shake.JPG — Miansari66 (CC0 1.0) — https://commons.wikimedia.org/wiki/File:Mango_Shake.JPG
+       Chocolatebrownie.JPG — Ɱ (CC BY-SA 3.0) — https://commons.wikimedia.org/wiki/File:Chocolatebrownie.JPG
+       Turon na Saging.jpg — Herbertkikoy (CC BY-SA 4.0) — https://commons.wikimedia.org/wiki/File:Turon_na_Saging.jpg
+    */
+
     function samplePhotoFor(food) {
       // The default demo IDs stay the same even if a previous menu was saved.
       var index = food.id - 1;
@@ -636,31 +661,6 @@
              'decoding="async" referrerpolicy="no-referrer" ' +
              'onerror="this.style.display=&quot;none&quot;;this.nextElementSibling.style.display=&quot;grid&quot;">' +
              fallback + '</div>';
-    }
-
-    function photoCredits() {
-      var html = '<details class="photo-credits"><summary>Food photograph credits and licenses</summary>' +
-        '<p>Illustrative food photographs from Wikimedia Commons. Images are cropped by ' +
-        'the card layout; actual canteen servings may differ.</p><ul>';
-      for (var i = 0; i < samplePhotos.length; i++) {
-        var info = samplePhotos[i];
-        var filePage = 'https://commons.wikimedia.org/wiki/File:' +
-                       encodeURIComponent(info.file.replace(/ /g, '_'));
-        var licensePages = {
-          "CC BY 4.0": "https://creativecommons.org/licenses/by/4.0/",
-          "CC BY-SA 4.0": "https://creativecommons.org/licenses/by-sa/4.0/",
-          "CC BY-SA 3.0": "https://creativecommons.org/licenses/by-sa/3.0/",
-          "CC0 1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
-          "Public domain": "https://creativecommons.org/publicdomain/mark/1.0/"
-        };
-        html += '<li><a href="' + filePage + '" target="_blank" ' +
-                'rel="noopener noreferrer">' + escapeHTML(defaultMenu[i].name) + '</a>' +
-                ' — ' + escapeHTML(info.credit) + ' (<a href="' + licensePages[info.license] +
-                '" target="_blank" rel="noopener noreferrer">' +
-                escapeHTML(info.license) + '</a>)</li>';
-      }
-      html += '</ul></details>';
-      return html;
     }
 
     function money(amount) {
@@ -758,6 +758,8 @@
       }
     }
 
+    // A saved session remembers only a user ID and expiration time.
+    // It does NOT contain a password. The browser checks it at page startup.
     function readDemoSession() {
       var record;
       try { record = JSON.parse(storageGet(SESSION_KEY) || "null"); }
@@ -856,6 +858,9 @@
     }
 
     // 3. User registration and sign-in (demo only)
+    // Login steps: read fields, find an account, check its password hash,
+    // remember the account for this browser, and show its dashboard.
+    // hashPassword() uses Web Crypto because saving plaintext passwords is unsafe.
     async function login(event) {
       event.preventDefault();
       var email = document.getElementById("login-email").value.trim().toLowerCase();
@@ -1549,19 +1554,37 @@
       showToast(food.name + (food.available ? " is now available." : " is now unavailable."));
     }
 
-    // 10. Basic profile page
+    // 10. My Profile: show account details and allow editing the name.
+    // Each line adds one visible section to the page.
     function renderProfile() {
-      return '<div class="page-intro"><span class="eyebrow">Your Account</span><h1>My Profile</h1><p>View and update your demonstration account information.</p></div>' +
-        '<div class="card profile-card"><div class="profile-header"><div class="avatar">' + initials(currentUser.name) + '</div><div><h2>' + escapeHTML(currentUser.name) + '</h2><div class="muted small" style="margin-top:5px;text-transform:capitalize">' + escapeHTML(currentUser.role) + ' Account</div></div></div>' +
-        '<form onsubmit="updateProfile(event)"><div class="form-field"><label for="profile-name">Full Name</label><input id="profile-name" required maxlength="70" value="' + escapeHTML(currentUser.name) + '"></div>' +
-        '<div class="form-field"><label>Email Address</label><input disabled value="' + escapeHTML(currentUser.email) + '"></div>' +
-        (currentUser.studentId ? '<div class="form-field"><label>Student ID</label><input disabled value="' + escapeHTML(currentUser.studentId) + '"></div>' : '') +
-        '<button class="btn btn-primary" type="submit">Save Profile</button></form><div class="divider"></div>' +
-        '<button class="btn btn-outline" onclick="logout()">Sign Out</button></div>' +
-        '<section class="card profile-credits"><details><summary>Credits and Licenses</summary>' +
-        '<p>Solar icons by <a href="https://solar-icons.dev/icons" target="_blank" rel="noopener noreferrer">480 Design (CC BY 4.0)</a>.</p>' +
-        '<p>The dashboard hero uses original AI-generated food visuals (Chicken Inasal and Halo-Halo); actual menu photos are credited below.</p>' +
-        photoCredits() + '</details></section>';
+      var html = '<div class="page-intro">' +
+        '<span class="eyebrow">Your Account</span>' +
+        '<h1>My Profile</h1>' +
+        '<p>View and update your demonstration account information.</p></div>';
+
+      html += '<div class="card profile-card">' +
+        '<div class="profile-header"><div class="avatar">' + initials(currentUser.name) + '</div>' +
+        '<div><h2>' + escapeHTML(currentUser.name) + '</h2>' +
+        '<div class="muted small" style="margin-top:5px;text-transform:capitalize">' +
+        escapeHTML(currentUser.role) + ' Account</div></div></div>';
+
+      html += '<form onsubmit="updateProfile(event)">' +
+        '<div class="form-field"><label for="profile-name">Full Name</label>' +
+        '<input id="profile-name" required maxlength="70" value="' + escapeHTML(currentUser.name) + '"></div>' +
+        '<div class="form-field"><label>Email Address</label>' +
+        '<input disabled value="' + escapeHTML(currentUser.email) + '"></div>';
+
+      // Only students have student IDs; staff and admins do not see this field.
+      if (currentUser.studentId) {
+        html += '<div class="form-field"><label>Student ID</label>' +
+          '<input disabled value="' + escapeHTML(currentUser.studentId) + '"></div>';
+      }
+
+      html += '<button class="btn btn-primary" type="submit">Save Profile</button></form>' +
+        '<div class="divider"></div>' +
+        '<button class="btn btn-outline" onclick="logout()">Sign Out</button></div>';
+
+      return html;
     }
 
     function updateProfile(event) {
