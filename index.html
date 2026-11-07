@@ -3105,7 +3105,7 @@
             '</div></div>' +
             '<div class="form-field"><label for="item-photo">Food Photo URL (HTTPS)</label>' +
             '<input id="item-photo" type="url" maxlength="400" placeholder="https://example.com/my-food-photo.jpg" ' +
-            'value="' + escapeHTML(food ? foodPhoto(food) : '') + '" ' + (food ? '' : 'required') + '>' +
+            'value="' + escapeHTML(food ? (food.photoUrl || '') : '') + '" ' + (food ? '' : 'required') + '>' +
             '<small class="muted">Use a photo of the actual food. New items need a photo URL. ' +
             'Photos from Wikimedia Commons may require attribution.</small></div>' +
             '<div class="form-field"><label for="item-description">Description</label>' +
@@ -3146,13 +3146,13 @@
             showToast("Please enter a valid food name, description, icon and price.", true);
             return;
         }
-        if (!/^https:\/\/[^\s"'<>]+$/i.test(photoUrl)) {
+        if ((!photoUrl && editingItemId === null) || (photoUrl && !/^https:\/\/[^\s"'<>]+$/i.test(photoUrl))) {
             showToast("Enter a valid HTTPS photograph URL.", true);
             return;
         }
         var fields = {
             name: name, price: price, category: category,
-            icon: selectedIcon, description: description, photo_url: photoUrl
+            icon: selectedIcon, description: description, photo_url: photoUrl || null
         };
         var button = event.target.querySelector('button[type="submit"]');
         button.disabled = true;
