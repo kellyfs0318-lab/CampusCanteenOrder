@@ -1899,6 +1899,7 @@
     var orderSaving = false;
     var pendingRequest = null;
     var dataRefreshPromise = null;
+    var dataRefreshUserId = null;
 
     // The API key is publishable; no database password or privileged key is here.
     // Account permissions and order rules are checked by PostgreSQL/RLS.
@@ -1935,10 +1936,12 @@
             return;
         }
         // Several screens may ask for the same refresh; share the pending request.
-        if (dataRefreshPromise) {
+        var requestedUserId = currentUser.id;
+        if (dataRefreshPromise && dataRefreshUserId === requestedUserId) {
             return dataRefreshPromise;
         }
-        dataRefreshPromise = (async function () {
+        dataRefreshUserId = requestedUserId;
+        var request = (async function () {
             var results = await Promise.all([
                 db.from("menu_items").select("*").order("id"),
                 db.from("orders").select("*, order_items(*)").order("id", { ascending: false })
@@ -1949,21 +1952,44 @@
             if (results[1].error) {
                 throw results[1].error;
             }
+            // Ignore an old response after the user signs out or changes accounts.
+            if (!currentUser || currentUser.id !== requestedUserId) {
+                return;
+            }
             menu = results[0].data.map(mapFood);
             orders = results[1].data.map(mapOrder);
             renderApp();
         })();
+        dataRefreshPromise = request;
         try {
-            return await dataRefreshPromise;
+            return await request;
         }
         finally {
-            dataRefreshPromise = null;
+            if (dataRefreshPromise === request) {
+                dataRefreshPromise = null;
+                dataRefreshUserId = null;
+            }
         }
     }
 
     async function refreshProfile() {
+        // A normal signed-out visitor has no session; show Sign In, not an error.
+        // Do not use the session's saved user object for authorization.
+        var savedSession = await db.auth.getSession();
+        if (savedSession.error) {
+            throw savedSession.error;
+        }
+        if (!savedSession.data || !savedSession.data.session) {
+            currentUser = null;
+            return false;
+        }
+        // getUser verifies the actual user with Supabase Auth.
         var response = await db.auth.getUser();
         if (response.error) {
+            if (response.error.name === "AuthSessionMissingError") {
+                currentUser = null;
+                return false;
+            }
             throw response.error;
         }
         var user = response.data.user;
@@ -2235,6 +2261,10 @@
                         currentUser = null;
                         cart = [];
                         orders = [];
+                        menu = [];
+                        pendingRequest = null;
+                        lastOrderId = null;
+                        selectedOrderId = null;
                         currentPage = "dashboard";
                         renderApp();
                     }
@@ -2342,6 +2372,12 @@
         currentUser = null;
         cart = [];
         orders = [];
+        menu = [];
+        pendingRequest = null;
+        try {
+            sessionStorage.removeItem("uc_pending_order_v1");
+        }
+        catch (error) { /* Session storage may be unavailable. */ }
         lastOrderId = null;
         selectedOrderId = null;
         selectedCategory = "All";
@@ -3244,7 +3280,15 @@
     // Refresh fresh server data when returning to this tab. No polling is needed.
     document.addEventListener("visibilitychange", function () {
         if (document.visibilityState === "visible" && currentUser) {
-            refreshProfile().then(function () {
+            refreshProfile().then(function (signedIn) {
+                if (!signedIn) {
+                    cart = [];
+                    orders = [];
+                    menu = [];
+                    currentPage = "dashboard";
+                    renderApp();
+                    return;
+                }
                 return refreshRemoteData();
             }).catch(function () {
                 showToast("Unable to refresh data. Try again when connected.", true);
