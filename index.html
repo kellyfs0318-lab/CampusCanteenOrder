@@ -1875,203 +1875,18 @@
   <div id="app"><div class="session-loading" role="status" aria-live="polite">Checking your session...</div></div>
   <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js"></script>
   <script>
     
     // 1. Starting menu and sample demonstration accounts
-    var defaultMenu = [
-        {
-            id: 1,
-            name: "Chicken Adobo Rice",
-            category: "Meals",
-            price: 75,
-            icon: "whisk",
-            description: "Classic Filipino chicken adobo served with steamed rice.",
-            available: true
-        },
-        {
-            id: 2,
-            name: "Pork Siomai Rice",
-            category: "Meals",
-            price: 60,
-            icon: "bag",
-            description: "Steamed siomai with rice and a savory dipping sauce.",
-            available: true
-        },
-        {
-            id: 3,
-            name: "Fried Chicken Meal",
-            category: "Meals",
-            price: 95,
-            icon: "whisk",
-            description: "Crispy fried chicken with rice and gravy.",
-            available: true
-        },
-        {
-            id: 4,
-            name: "Pancit Canton",
-            category: "Meals",
-            price: 55,
-            icon: "whisk",
-            description: "Stir-fried noodles with vegetables and seasoning.",
-            available: true
-        },
-        {
-            id: 5,
-            name: "Tuna Sandwich",
-            category: "Snacks",
-            price: 45,
-            icon: "bag",
-            description: "Toasted bread filled with seasoned tuna.",
-            available: true
-        },
-        {
-            id: 6,
-            name: "Cheese Burger",
-            category: "Snacks",
-            price: 65,
-            icon: "bag",
-            description: "Beef patty with cheese in a soft burger bun.",
-            available: true
-        },
-        {
-            id: 7,
-            name: "French Fries",
-            category: "Snacks",
-            price: 40,
-            icon: "donut",
-            description: "Golden potato fries with dipping sauce.",
-            available: true
-        },
-        {
-            id: 8,
-            name: "Iced Tea",
-            category: "Drinks",
-            price: 25,
-            icon: "tea",
-            description: "Refreshing iced tea, served cold.",
-            available: true
-        },
-        {
-            id: 9,
-            name: "Bottled Water",
-            category: "Drinks",
-            price: 20,
-            icon: "cup",
-            description: "Chilled drinking water for your meal.",
-            available: true
-        },
-        {
-            id: 10,
-            name: "Mango Shake",
-            category: "Drinks",
-            price: 55,
-            icon: "cup",
-            description: "Cold blended mango drink.",
-            available: true
-        },
-        {
-            id: 11,
-            name: "Chocolate Brownie",
-            category: "Desserts",
-            price: 35,
-            icon: "donut",
-            description: "Soft chocolate brownie for dessert.",
-            available: true
-        },
-        {
-            id: 12,
-            name: "Banana Turon",
-            category: "Desserts",
-            price: 25,
-            icon: "donut",
-            description: "Crispy caramelized banana spring roll.",
-            available: true
-        }
-    ];
-    var defaultUsers = [
-        {
-            id: 1,
-            name: "Demo Student",
-            studentId: "2026-0001",
-            email: "student@uc.edu.ph",
-            passwordSalt: "4a806dd56daa5aca249168143f1c49a0",
-            passwordHash: "f08d37733b3f24b4486c7da613d0b7324c79158091b3718e3d7437c5ad9597e4",
-            role: "student"
-        },
-        {
-            id: 2,
-            name: "Canteen Staff",
-            studentId: "",
-            email: "staff@uc.edu.ph",
-            passwordSalt: "b1939172f0942ed0858de89035a72565",
-            passwordHash: "54be209411f793561631a57ba97cfdb7a7c029f3bcb6a29d54288c3e45770e05",
-            role: "staff"
-        },
-        {
-            id: 3,
-            name: "Canteen Admin",
-            studentId: "",
-            email: "admin@uc.edu.ph",
-            passwordSalt: "f9af95cf24878ceaf2e5d108134b4558",
-            passwordHash: "e599dde9b2f3d9d26d88626da697313eac0c54a7bccd12f5e9e97382889e5f56",
-            role: "admin"
-        }
-    ];
-    // Storage helpers keep the app usable when browser storage is restricted.
-    function storageGet(key) {
-        try {
-            return localStorage.getItem(key);
-        }
-        catch (error) {
-            return null;
-        }
-    }
-    function storageSet(key, value) {
-        try {
-            localStorage.setItem(key, value);
-            return true;
-        }
-        catch (error) {
-            return false;
-        }
-    }
-    function storageRemove(key) {
-        try {
-            localStorage.removeItem(key);
-        }
-        catch (error) { /* Private browsing may restrict local storage. */ }
-    }
-    // 2. Save / load basic application data
-    // localStorage stores text, so JSON converts arrays and objects into text.
-    // Reading JSON converts that text back into arrays and objects.
-    function loadData(key, defaultValue) {
-        var saved = storageGet(key);
-        if (saved === null) {
-            storageSet(key, JSON.stringify(defaultValue));
-            return JSON.parse(JSON.stringify(defaultValue));
-        }
-        try {
-            var result = JSON.parse(saved);
-            if (Array.isArray(defaultValue) && !Array.isArray(result)) {
-                return JSON.parse(JSON.stringify(defaultValue));
-            }
-            return result;
-        }
-        catch (error) {
-            return JSON.parse(JSON.stringify(defaultValue));
-        }
-    }
-    var users = loadData("uc_users_v1", defaultUsers);
-    var menu = loadData("uc_menu_v1", defaultMenu);
-    var orders = loadData("uc_orders_v1", []);
-    // Legacy session data is discarded; new demo sessions use an expiry date.
-    storageRemove("uc_current_user_v1");
+    // One public application file. All account and order data lives in Supabase.
+    var SUPABASE_URL = "https://ajdpjxklzwezvsnjvzne.supabase.co";
+    var SUPABASE_KEY = "sb_publishable_pyk2Ynr_DP-6lA1CFiUA9A_Dyywlb6m";
+    var db = null;
+    var users = [];
+    var menu = [];
+    var orders = [];
     var currentUser = null;
-    var temporarySession = false; // Used only when the browser blocks storage.
-    var SESSION_KEY = "uc_demo_session_v2";
-    var SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // Seven days.
-    var PASSWORD_ROUNDS = 120000;
-    var sessionExpiryTimer = null;
     var cart = [];
     var currentPage = "dashboard";
     var authPage = "login";
@@ -2081,19 +1896,94 @@
     var lastOrderId = null;
     var staffFilter = "All";
     var editingItemId = null;
-    for (var m = 0; m < menu.length; m++) {
-        if (!menu[m].icon) {
-            menu[m].icon = foodIcon(menu[m]);
-        }
-        delete menu[m].emoji;
-    }
-    storageSet("uc_menu_v1", JSON.stringify(menu));
+    var orderSaving = false;
+    var pendingRequest = null;
+    var dataRefreshPromise = null;
+
+    // The API key is publishable; no database password or privileged key is here.
+    // Account permissions and order rules are checked by PostgreSQL/RLS.
+
     var logoImage = "data:image/png;base64,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";
-    function saveData() {
-        storageSet("uc_users_v1", JSON.stringify(users));
-        storageSet("uc_menu_v1", JSON.stringify(menu));
-        storageSet("uc_orders_v1", JSON.stringify(orders));
+    // No browser storage is used as the authoritative order or account database.
+    // The visible pages below use these arrays after the server sends fresh records.
+
+    function mapFood(row) {
+        return {
+            id: Number(row.id), name: row.name, category: row.category,
+            price: Number(row.price), description: row.description,
+            icon: row.icon, photoUrl: row.photo_url || "", available: row.available
+        };
     }
+
+    function mapOrder(row) {
+        return {
+            id: Number(row.id), studentId: row.user_id,
+            studentName: row.student_name, pickupName: row.pickup_name,
+            pickupTime: row.pickup_time, notes: row.notes,
+            total: Number(row.total), status: row.status, createdAt: row.created_at,
+            items: (row.order_items || []).map(function (item) {
+                return {
+                    foodId: Number(item.item_id), name: item.item_name,
+                    price: Number(item.unit_price), quantity: item.quantity
+                };
+            })
+        };
+    }
+
+    async function refreshRemoteData() {
+        if (!db || !currentUser) {
+            return;
+        }
+        // Several screens may ask for the same refresh; share the pending request.
+        if (dataRefreshPromise) {
+            return dataRefreshPromise;
+        }
+        dataRefreshPromise = (async function () {
+            var results = await Promise.all([
+                db.from("menu_items").select("*").order("id"),
+                db.from("orders").select("*, order_items(*)").order("id", { ascending: false })
+            ]);
+            if (results[0].error) {
+                throw results[0].error;
+            }
+            if (results[1].error) {
+                throw results[1].error;
+            }
+            menu = results[0].data.map(mapFood);
+            orders = results[1].data.map(mapOrder);
+            renderApp();
+        })();
+        try {
+            return await dataRefreshPromise;
+        }
+        finally {
+            dataRefreshPromise = null;
+        }
+    }
+
+    async function refreshProfile() {
+        var response = await db.auth.getUser();
+        if (response.error) {
+            throw response.error;
+        }
+        var user = response.data.user;
+        if (!user) {
+            currentUser = null;
+            return false;
+        }
+        var profile = await db.from("profiles").select("*").eq("id", user.id).single();
+        if (profile.error) {
+            throw profile.error;
+        }
+        // The role is read from the server-controlled profile, not user metadata.
+        currentUser = {
+            id: user.id, name: profile.data.full_name,
+            email: user.email, studentId: profile.data.student_id || "",
+            role: profile.data.role
+        };
+        return true;
+    }
+
     function findUser(id) {
         for (var i = 0; i < users.length; i++) {
             if (users[i].id === id) {
@@ -2290,129 +2180,9 @@
         }
         return total;
     }
-    // 3. Browser-only account checks and demonstration session restoration.
-    // These checks do NOT replace a server-side authentication provider.
-    function hexToBytes(hex) {
-        var bytes = new Uint8Array(hex.length / 2);
-        for (var i = 0; i < bytes.length; i++) {
-            bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
-        }
-        return bytes;
-    }
-    function bytesToHex(bytes) {
-        var result = "";
-        for (var i = 0; i < bytes.length; i++) {
-            result += bytes[i].toString(16).padStart(2, "0");
-        }
-        return result;
-    }
-    function makePasswordSalt() {
-        var bytes = new Uint8Array(16);
-        crypto.getRandomValues(bytes);
-        return bytesToHex(bytes);
-    }
-    // PBKDF2 prevents saving passwords as plain text in localStorage.
-    async function hashPassword(password, salt) {
-        if (!window.crypto || !crypto.subtle) {
-            throw new Error("Password protection requires a secure browser context.");
-        }
-        var encoder = new TextEncoder();
-        var key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
-        var data = await crypto.subtle.deriveBits({
-            name: "PBKDF2",
-            salt: hexToBytes(salt),
-            iterations: PASSWORD_ROUNDS,
-            hash: "SHA-256"
-        }, key, 256);
-        return bytesToHex(new Uint8Array(data));
-    }
-    // Upgrade existing accounts without deleting their orders or profile information.
-    async function upgradeOldPasswords() {
-        var changed = false;
-        for (var i = 0; i < users.length; i++) {
-            if (typeof users[i].password === "string") {
-                var salt = makePasswordSalt();
-                users[i].passwordHash = await hashPassword(users[i].password, salt);
-                users[i].passwordSalt = salt;
-                delete users[i].password;
-                changed = true;
-            }
-        }
-        if (changed && !storageSet("uc_users_v1", JSON.stringify(users))) {
-            throw new Error("Unable to save the upgraded account records.");
-        }
-    }
-    // A saved session remembers only a user ID and expiration time.
-    // It does NOT contain a password. The browser checks it at page startup.
-    function readDemoSession() {
-        var record;
-        try {
-            record = JSON.parse(storageGet(SESSION_KEY) || "null");
-        }
-        catch (error) {
-            record = null;
-        }
-        var now = Date.now();
-        if (!record || record.version !== 2 ||
-            !Number.isInteger(record.userId) ||
-            !Number.isFinite(record.issuedAt) ||
-            !Number.isFinite(record.expiresAt) ||
-            record.issuedAt > now || record.expiresAt <= now ||
-            record.expiresAt <= record.issuedAt ||
-            record.expiresAt - record.issuedAt > SESSION_DURATION) {
-            storageRemove(SESSION_KEY);
-            return null;
-        }
-        var user = findUser(record.userId);
-        if (!user || user.disabled === true ||
-            ["student", "staff", "admin"].indexOf(user.role) === -1 ||
-            !user.passwordHash) {
-            storageRemove(SESSION_KEY);
-            return null;
-        }
-        // Identity and role are taken from the current account record,
-        // never from the saved session marker itself.
-        return user;
-    }
-    function rememberDemoUser(user) {
-        var now = Date.now();
-        temporarySession = !storageSet(SESSION_KEY, JSON.stringify({
-            version: 2,
-            userId: user.id,
-            issuedAt: now,
-            expiresAt: now + SESSION_DURATION
-        }));
-        scheduleSessionExpiry();
-    }
-    // A single timeout checks expiry while the app stays open.
-    function scheduleSessionExpiry() {
-        if (sessionExpiryTimer) {
-            clearTimeout(sessionExpiryTimer);
-        }
-        sessionExpiryTimer = null;
-        if (temporarySession) {
-            return;
-        }
-        var record;
-        try {
-            record = JSON.parse(storageGet(SESSION_KEY) || "null");
-        }
-        catch (error) {
-            return;
-        }
-        if (!record || !Number.isFinite(record.expiresAt)) {
-            return;
-        }
-        sessionExpiryTimer = setTimeout(function () {
-            if (currentUser && !readDemoSession()) {
-                currentUser = null;
-                currentPage = "dashboard";
-                authPage = "login";
-                renderApp();
-                showToast("Your demonstration session expired. Please sign in again.", true);
-            }
-        }, Math.max(0, record.expiresAt - Date.now()));
-    }
+    // 3. Supabase Authentication replaces the old browser-only demo accounts.
+    // Supabase manages password hashing, token expiry, and session restoration.
+
     function canOpenPage(page) {
         if (!currentUser) {
             return false;
@@ -2437,73 +2207,80 @@
         document.getElementById("app").innerHTML =
             '<div class="session-loading" role="status" aria-live="polite">Checking your session...</div>';
     }
+    function showBackendError(message) {
+        var app = document.getElementById("app");
+        app.innerHTML = '<main class="session-loading" role="alert">' +
+            '<div><h2>Campus Canteen is unavailable</h2>' +
+            '<p>' + escapeHTML(message) + '</p>' +
+            '<button class="btn btn-primary" onclick="initializeApp()">Try Again</button></div>' +
+            '</main>';
+    }
+
     async function initializeApp() {
         displayLoading();
         try {
-            await upgradeOldPasswords();
-            currentUser = readDemoSession();
+            if (!window.supabase || !window.supabase.createClient) {
+                throw new Error("Unable to load the Supabase connection. Check your internet connection.");
+            }
+            if (!db) {
+                db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true
+                    }
+                });
+                db.auth.onAuthStateChange(function (event) {
+                    if (event === "SIGNED_OUT") {
+                        currentUser = null;
+                        cart = [];
+                        orders = [];
+                        currentPage = "dashboard";
+                        renderApp();
+                    }
+                });
+            }
+            var signedIn = await refreshProfile();
+            if (signedIn) {
+                await refreshRemoteData();
+                currentPage = pageFromHash();
+                if (!canOpenPage(currentPage) || ["order-details", "confirmation"].includes(currentPage)) {
+                    currentPage = "dashboard";
+                }
+            }
+            renderApp();
         }
         catch (error) {
-            currentUser = null;
-            storageRemove(SESSION_KEY);
-            renderApp();
-            showToast("Account initialization failed. Use a modern browser with secure storage.", true);
-            return;
+            showBackendError(error.message || "Unable to connect to the Campus Canteen database.");
         }
-        currentPage = pageFromHash();
-        if (currentUser && !canOpenPage(currentPage)) {
-            currentPage = "dashboard";
-        }
-        // These two transient pages need selections not saved across a reload.
-        if (currentUser && ["order-details", "confirmation"].indexOf(currentPage) !== -1) {
-            currentPage = "orders";
-        }
-        scheduleSessionExpiry();
-        renderApp();
     }
-    // 3. User registration and sign-in (demo only)
-    // Login steps: read fields, find an account, check its password hash,
-    // remember the account for this browser, and show its dashboard.
-    // hashPassword() uses Web Crypto because saving plaintext passwords is unsafe.
+
     async function login(event) {
         event.preventDefault();
         var email = document.getElementById("login-email").value.trim().toLowerCase();
-        var passwordField = document.getElementById("login-password");
-        var password = passwordField.value;
+        var password = document.getElementById("login-password").value;
         var button = event.target.querySelector('button[type="submit"]');
         button.disabled = true;
         try {
-            for (var i = 0; i < users.length; i++) {
-                if (users[i].email.toLowerCase() !== email || !users[i].passwordHash) {
-                    continue;
-                }
-                var candidateHash = await hashPassword(password, users[i].passwordSalt);
-                if (candidateHash === users[i].passwordHash && users[i].disabled !== true) {
-                    currentUser = users[i];
-                    rememberDemoUser(currentUser);
-                    cart = [];
-                    currentPage = pageFromHash();
-                    if (!canOpenPage(currentPage)) {
-                        currentPage = "dashboard";
-                    }
-                    passwordField.value = "";
-                    renderApp();
-                    showToast("Signed in as " + currentUser.name + ".");
-                    if (temporarySession) {
-                        showToast("Browser storage is blocked; sign-in will not persist.", true);
-                    }
-                    return;
-                }
+            var result = await db.auth.signInWithPassword({ email: email, password: password });
+            if (result.error) {
+                throw result.error;
             }
-            showToast("Incorrect email or password. Please try again.", true);
+            await refreshProfile();
+            await refreshRemoteData();
+            cart = [];
+            currentPage = canOpenPage(pageFromHash()) ? pageFromHash() : "dashboard";
+            renderApp();
+            showToast("Welcome back, " + currentUser.name + "!");
         }
         catch (error) {
-            showToast("Could not verify your password in this browser.", true);
+            showToast(error.message || "Sign-in failed. Please try again.", true);
         }
         finally {
             button.disabled = false;
         }
     }
+
     async function register(event) {
         event.preventDefault();
         var name = document.getElementById("register-name").value.trim();
@@ -2511,66 +2288,60 @@
         var email = document.getElementById("register-email").value.trim().toLowerCase();
         var password = document.getElementById("register-password").value;
         var confirmPassword = document.getElementById("register-confirm").value;
-        if (!name || !studentId || !email || !password) {
-            showToast("Please complete all fields.", true);
-            return;
-        }
-        if (password.length < 6) {
-            showToast("Password must have at least 6 characters.", true);
+        if (!name || !studentId || !email || password.length < 6) {
+            showToast("Complete all fields and use a password with at least 6 characters.", true);
             return;
         }
         if (password !== confirmPassword) {
             showToast("Passwords do not match.", true);
             return;
         }
-        for (var i = 0; i < users.length; i++) {
-            if (users[i].email.toLowerCase() === email || users[i].studentId === studentId) {
-                showToast("Email or Student ID is already registered.", true);
-                return;
-            }
-        }
-        var newId = 1;
-        for (var j = 0; j < users.length; j++) {
-            if (users[j].id >= newId) {
-                newId = users[j].id + 1;
-            }
-        }
         var button = event.target.querySelector('button[type="submit"]');
         button.disabled = true;
-        var passwordSalt;
-        var passwordHash;
         try {
-            passwordSalt = makePasswordSalt();
-            passwordHash = await hashPassword(password, passwordSalt);
+            var result = await db.auth.signUp({
+                email: email, password: password,
+                options: {
+                    data: { full_name: name, student_id: studentId },
+                    emailRedirectTo: location.origin + location.pathname
+                }
+            });
+            if (result.error) {
+                throw result.error;
+            }
+            if (result.data.session) {
+                await refreshProfile();
+                await refreshRemoteData();
+                currentPage = "dashboard";
+                renderApp();
+                showToast("Account created. You are now signed in.");
+            }
+            else {
+                authPage = "login";
+                renderApp();
+                showToast("Registration received. Check your email for confirmation before signing in.");
+            }
         }
         catch (error) {
+            showToast(error.message || "Registration failed.", true);
+        }
+        finally {
             button.disabled = false;
-            showToast("Could not protect your password in this browser.", true);
+        }
+    }
+
+    async function logout() {
+        if (!db) {
             return;
         }
-        users.push({
-            id: newId,
-            name: name,
-            studentId: studentId,
-            email: email,
-            passwordSalt: passwordSalt,
-            passwordHash: passwordHash,
-            role: "student"
-        });
-        saveData();
-        authPage = "login";
-        renderApp();
-        showToast("Registration successful! Sign in with your new account.");
-    }
-    function logout() {
-        storageRemove(SESSION_KEY);
-        if (sessionExpiryTimer) {
-            clearTimeout(sessionExpiryTimer);
+        var result = await db.auth.signOut();
+        if (result.error) {
+            showToast("Sign out could not be confirmed. Please try again.", true);
+            return;
         }
-        sessionExpiryTimer = null;
-        temporarySession = false;
         currentUser = null;
         cart = [];
+        orders = [];
         lastOrderId = null;
         selectedOrderId = null;
         selectedCategory = "All";
@@ -2583,10 +2354,11 @@
         try {
             history.replaceState(null, "", location.pathname + location.search);
         }
-        catch (error) { /* Continue with sign-out even if URL replacement fails. */ }
+        catch (error) { /* A browser may restrict URL changes for local HTML files. */ }
         renderApp();
         showToast("You have signed out.");
     }
+
     function showAuth(page) {
         authPage = page;
         renderApp();
@@ -2642,16 +2414,6 @@
     }
     // 5. Main page rendering
     function renderApp() {
-        // Recheck a saved demo session whenever a protected screen is rendered.
-        if (currentUser && !temporarySession) {
-            var savedUser = readDemoSession();
-            if (!savedUser || savedUser.id !== currentUser.id) {
-                currentUser = null;
-            }
-            else {
-                currentUser = savedUser;
-            }
-        }
         if (currentUser && !canOpenPage(currentPage)) {
             currentPage = "dashboard";
         }
@@ -3010,15 +2772,32 @@
                 '<option value="Around 30 minutes">Around 30 minutes</option></select></div>' +
             '<div class="form-field"><label for="order-notes">Special Instructions (optional)</label>' +
                 '<textarea id="order-notes" maxlength="200" placeholder="e.g., No spicy sauce"></textarea></div>' +
-            '<div class="notice"><span class="payment-icon">' + solarIcon("bag") + '</span><strong>Payment Method: Pay at Pickup</strong><br>This student demonstration does not process online payments.</div></div>' +
+            '<div class="notice"><span class="payment-icon">' + solarIcon("bag") + '</span><strong>Payment Method: Pay at Pickup</strong><br>Pay when collecting your order. Online payments are not available.</div></div>' +
             '<div class="card"><h3>Order Summary</h3><div class="divider"></div>' + items + '<div class="divider"></div><div class="summary-row"><strong>Total to Pay</strong><span class="summary-total">' + money(cartTotal()) + '</span></div>' +
             '<button type="submit" class="btn btn-primary btn-block">' + solarIcon("check") + ' Place Order</button>' +
                 '<button type="button" class="btn btn-outline btn-block" style="margin-top:9px" onclick="showPage(\'cart\')">Back to Cart</button>' +
                 '</div></div></form>';
     }
-    function submitOrder(event) {
+    // Create a random request ID. The database uses it to stop duplicate orders.
+    function makeOrderRequestKey() {
+        var bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+        bytes[6] = (bytes[6] & 15) | 64;
+        bytes[8] = (bytes[8] & 63) | 128;
+        var values = [];
+        for (var i = 0; i < bytes.length; i++) {
+            values.push(bytes[i].toString(16).padStart(2, "0"));
+        }
+        return values.slice(0, 4).join("") + "-" + values.slice(4, 6).join("") +
+            "-" + values.slice(6, 8).join("") + "-" +
+            values.slice(8, 10).join("") + "-" + values.slice(10).join("");
+    }
+
+    // The server calculates prices, validates stock and saves everything in one transaction.
+    // A retry keeps the same request key to avoid duplicate orders.
+    async function submitOrder(event) {
         event.preventDefault();
-        if (!currentUser || currentUser.role !== "student" || !cart.length) {
+        if (orderSaving || !currentUser || currentUser.role !== "student" || !cart.length) {
             return;
         }
         var pickupName = document.getElementById("pickup-name").value.trim();
@@ -3028,45 +2807,63 @@
             showToast("Please provide a pickup name.", true);
             return;
         }
-        var orderItems = [];
-        var total = 0;
-        for (var i = 0; i < cart.length; i++) {
-            var food = findFood(cart[i].foodId);
-            if (!food || !food.available) {
-                showToast("An item in your cart is unavailable. Please update your cart.", true);
-                return;
-            }
-            orderItems.push({
-                foodId: food.id,
-                name: food.name,
-                price: food.price,
-                quantity: cart[i].quantity
-            });
-            total += food.price * cart[i].quantity;
-        }
-        var newId = 1001;
-        for (var j = 0; j < orders.length; j++) {
-            if (orders[j].id >= newId) {
-                newId = orders[j].id + 1;
-            }
-        }
-        orders.push({
-            id: newId,
-            studentId: currentUser.id,
-            pickupName: pickupName,
-            pickupTime: pickupTime,
-            notes: notes,
-            items: orderItems,
-            total: total,
-            status: "Pending",
-            createdAt: new Date().toISOString()
+        var items = cart.map(function (item) {
+            return { id: item.foodId, quantity: item.quantity };
         });
-        lastOrderId = newId;
-        cart = [];
-        saveData();
-        showPage("confirmation");
-        showToast("Order #" + newId + " placed successfully!");
+        var fingerprint = JSON.stringify([currentUser.id, items, pickupName, pickupTime, notes]);
+        var saved = pendingRequest;
+        try {
+            if (!saved) {
+                saved = JSON.parse(sessionStorage.getItem("uc_pending_order_v1") || "null");
+            }
+        }
+        catch (error) { /* Restricted storage is handled by the in-memory key. */ }
+        if (!saved || saved.fingerprint !== fingerprint) {
+            saved = { fingerprint: fingerprint, key: makeOrderRequestKey() };
+            try {
+                sessionStorage.setItem("uc_pending_order_v1", JSON.stringify(saved));
+            }
+            catch (error) { /* Network retry remains protected in this tab. */ }
+        }
+        pendingRequest = saved;
+        var button = event.target.querySelector('button[type="submit"]');
+        orderSaving = true;
+        button.disabled = true;
+        try {
+            var result = await db.rpc("place_canteen_order", {
+                p_items: items,
+                p_pickup_name: pickupName,
+                p_pickup_time: pickupTime,
+                p_notes: notes,
+                p_request_key: saved.key
+            });
+            if (result.error) {
+                throw result.error;
+            }
+            lastOrderId = Number(result.data);
+            await refreshRemoteData();
+            if (!findOrder(lastOrderId)) {
+                throw new Error("Order saved, but its details could not be loaded. Refresh My Orders.");
+            }
+            pendingRequest = null;
+            try {
+                sessionStorage.removeItem("uc_pending_order_v1");
+            }
+            catch (error) { /* Storage might be unavailable in a browser sandbox. */ }
+            cart = [];
+            currentPage = "confirmation";
+            renderApp();
+            showToast("Order placed successfully!");
+        }
+        catch (error) {
+            showToast(error.message || "Could not place the order. Please retry.", true);
+        }
+        finally {
+            orderSaving = false;
+            button.disabled = false;
+        }
     }
+
     function renderConfirmation() {
         var order = findOrder(lastOrderId);
         if (!order || order.studentId !== currentUser.id) {
@@ -3099,7 +2896,8 @@
         var myOrders = getMyOrders();
         myOrders.sort(function (a, b) { return b.id - a.id; });
         var html = '<div class="page-intro"><span class="eyebrow">Order Tracking</span><h1>My Orders</h1>' +
-            '<p>Track your current orders and review previous purchases.</p></div>';
+            '<p>Track your current orders and review previous purchases.</p>' +
+            '<button class="btn btn-outline" onclick="refreshOrders()">Refresh Orders</button></div>';
         if (!myOrders.length) {
             return html + '<div class="empty"><div class="big-icon">' + solarIcon("orders") + '</div><h3>No orders yet</h3><p>When you order food, its status will appear here.</p>' +
                 '<button class="btn btn-primary" onclick="showPage(\'menu\')">Browse Food Menu</button></div>';
@@ -3151,25 +2949,41 @@
             (order.notes ? '<p><strong>Instructions:</strong> ' + escapeHTML(order.notes) + '</p>' : '') + '</div>' +
             '<div class="card"><h3>Food Items</h3><div class="divider"></div>' + items + '<div class="divider"></div><div class="summary-row"><strong>Total</strong><span class="summary-total">' + money(order.total) + '</span></div>' +
             '<button class="btn btn-outline btn-block" onclick="showPage(\'orders\')">Back to My Orders</button>' +
+            '<button class="btn btn-outline btn-block" style="margin-top:10px" onclick="refreshOrders()">Refresh Status</button>' +
             (order.status === "Pending" ? '<button class="btn btn-danger btn-block" style="margin-top:10px" onclick="cancelMyOrder(' + order.id + ')">Cancel Order</button>' : '') + '</div></div>';
     }
-    function cancelMyOrder(id) {
+    async function cancelMyOrder(id) {
         var order = findOrder(id);
-        if (!order || order.studentId !== currentUser.id || order.status !== "Pending") {
+        if (!order || !currentUser || order.studentId !== currentUser.id || order.status !== "Pending") {
             return;
         }
         if (!confirm("Cancel order #" + id + "?")) {
             return;
         }
-        order.status = "Cancelled";
-        saveData();
-        renderApp();
-        showToast("Order #" + id + " cancelled.");
+        await changeOrderStatus(id, "cancel");
     }
+
+    async function changeOrderStatus(id, action) {
+        try {
+            var response = await db.rpc("change_canteen_order_status", {
+                p_order_id: id, p_action: action
+            });
+            if (response.error) {
+                throw response.error;
+            }
+            await refreshRemoteData();
+            showToast("Order #" + id + " is now " + response.data + ".");
+        }
+        catch (error) {
+            showToast(error.message || "Order update failed.", true);
+        }
+    }
+
     // 8. Staff order processing
     function renderStaffOrders() {
         var html = '<div class="page-intro"><span class="eyebrow">Canteen Operations</span><h1>Order Management</h1>' +
-            '<p>Review incoming orders and move each order through the preparation process.</p></div>' +
+            '<p>Review incoming orders and move each order through the preparation process.</p>' +
+            '<button class="btn btn-outline" onclick="refreshOrders()">Refresh Orders</button></div>' +
             '<div class="filter-bar">';
         var filters = ["All", "Pending", "Preparing", "Ready for Pickup", "Completed", "Cancelled"];
         for (var i = 0; i < filters.length; i++) {
@@ -3190,7 +3004,7 @@
             var order = filtered[k];
             var student = findUser(order.studentId);
             var next = nextStatus(order.status);
-            html += '<article class="order-card staff-card"><div class="order-head"><div><h3>Order #' + order.id + '</h3><span class="muted small">' + formatDate(order.createdAt) + ' · ' + escapeHTML(student ? student.name : "Student") + '</span></div>' + statusBadge(order.status) + '</div>' +
+            html += '<article class="order-card staff-card"><div class="order-head"><div><h3>Order #' + order.id + '</h3><span class="muted small">' + formatDate(order.createdAt) + ' · ' + escapeHTML(order.studentName || (student ? student.name : "Student")) + '</span></div>' + statusBadge(order.status) + '</div>' +
                 '<div class="order-items">' + escapeHTML(orderItemSummary(order)) + '</div><div class="muted small">Pickup: ' + escapeHTML(order.pickupName) + ' · ' + escapeHTML(order.pickupTime) +
                 (order.notes ? '<br>Instructions: ' + escapeHTML(order.notes) : '') + '</div><div class="order-foot"><strong>' + money(order.total) + '</strong><div class="button-row">' +
                 (next ? '<button class="btn btn-primary btn-sm" onclick="advanceOrder(' + order.id + ')">' + next + '</button>' : '') +
@@ -3210,39 +3024,24 @@
         }
         return "";
     }
-    function advanceOrder(id) {
-        if (!currentUser || currentUser.role === "student") {
+    async function advanceOrder(id) {
+        if (!currentUser || !["staff", "admin"].includes(currentUser.role)) {
             return;
         }
-        var order = findOrder(id);
-        if (!order) {
-            return;
-        }
-        var next = nextStatus(order.status);
-        if (!next) {
-            return;
-        }
-        order.status = next;
-        saveData();
-        renderApp();
-        showToast("Order #" + id + " is now " + next + ".");
+        await changeOrderStatus(id, "advance");
     }
-    function cancelStaffOrder(id) {
-        if (!currentUser || currentUser.role === "student") {
-            return;
-        }
+
+    async function cancelStaffOrder(id) {
         var order = findOrder(id);
-        if (!order || order.status !== "Pending") {
+        if (!currentUser || !["staff", "admin"].includes(currentUser.role)
+            || !order || order.status !== "Pending") {
             return;
         }
-        if (!confirm("Cancel order #" + id + "?")) {
-            return;
+        if (confirm("Cancel order #" + id + "?")) {
+            await changeOrderStatus(id, "cancel");
         }
-        order.status = "Cancelled";
-        saveData();
-        renderApp();
-        showToast("Order #" + id + " cancelled.");
     }
+
     function changeStaffFilter(filter) {
         staffFilter = filter;
         renderApp();
@@ -3296,7 +3095,7 @@
             input.value = foodIcon(food);
         }
     }
-    function saveFoodItem(event) {
+    async function saveFoodItem(event) {
         event.preventDefault();
         if (!currentUser || currentUser.role !== "admin") {
             return;
@@ -3308,48 +3107,45 @@
         var description = document.getElementById("item-description").value.trim();
         var photoUrl = document.getElementById("item-photo").value.trim();
         if (!name || !description || !selectedIcon || !isFinite(price) || price < 1 || price > 10000) {
-            showToast("Enter a valid food name, description, icon, and price.", true);
+            showToast("Please enter a valid food name, description, icon and price.", true);
             return;
         }
-        if (!/^https:\/\/[^\s\"'<>]+$/i.test(photoUrl)) {
+        if (!/^https:\/\/[^\s"'<>]+$/i.test(photoUrl)) {
             showToast("Enter a valid HTTPS photograph URL.", true);
             return;
         }
-        if (editingItemId !== null) {
-            var existing = findFood(editingItemId);
-            if (!existing) {
-                return;
+        var fields = {
+            name: name, price: price, category: category,
+            icon: selectedIcon, description: description, photo_url: photoUrl
+        };
+        var button = event.target.querySelector('button[type="submit"]');
+        button.disabled = true;
+        try {
+            var request;
+            if (editingItemId !== null) {
+                request = db.from("menu_items").update(fields).eq("id", editingItemId).select().single();
             }
-            existing.name = name;
-            existing.price = price;
-            existing.category = category;
-            existing.icon = selectedIcon;
-            existing.description = description;
-            existing.photoUrl = photoUrl;
-        }
-        else {
-            var newId = 1;
-            for (var i = 0; i < menu.length; i++) {
-                if (menu[i].id >= newId) {
-                    newId = menu[i].id + 1;
-                }
+            else {
+                fields.available = true;
+                request = db.from("menu_items").insert(fields).select().single();
             }
-            menu.push({
-                id: newId,
-                name: name,
-                price: price,
-                category: category,
-                icon: selectedIcon,
-                description: description,
-                photoUrl: photoUrl,
-                available: true
-            });
+            var result = await request;
+            if (result.error) {
+                throw result.error;
+            }
+            editingItemId = null;
+            await refreshRemoteData();
+            renderApp();
+            showToast("Food menu saved successfully.");
         }
-        editingItemId = null;
-        saveData();
-        renderApp();
-        showToast("Food menu saved successfully.");
+        catch (error) {
+            showToast(error.message || "Could not save the menu item.", true);
+        }
+        finally {
+            button.disabled = false;
+        }
     }
+
     function editFoodItem(id) {
         if (!currentUser || currentUser.role !== "admin") {
             return;
@@ -3364,7 +3160,7 @@
         editingItemId = null;
         renderApp();
     }
-    function toggleFoodAvailability(id) {
+    async function toggleFoodAvailability(id) {
         if (!currentUser || currentUser.role !== "admin") {
             return;
         }
@@ -3372,18 +3168,27 @@
         if (!food) {
             return;
         }
-        food.available = !food.available;
-        saveData();
-        renderApp();
-        showToast(food.name + (food.available ? " is now available." : " is now unavailable."));
+        try {
+            var result = await db.from("menu_items")
+                .update({ available: !food.available }).eq("id", id).select().single();
+            if (result.error) {
+                throw result.error;
+            }
+            await refreshRemoteData();
+            showToast(food.name + (food.available ? " is now unavailable." : " is now available."));
+        }
+        catch (error) {
+            showToast(error.message || "Could not change food availability.", true);
+        }
     }
+
     // 10. My Profile: show account details and allow editing the name.
     // Each line adds one visible section to the page.
     function renderProfile() {
         var html = '<div class="page-intro">' +
             '<span class="eyebrow">Your Account</span>' +
             '<h1>My Profile</h1>' +
-            '<p>View and update your demonstration account information.</p></div>';
+            '<p>View and update your account information.</p></div>';
         html += '<div class="card profile-card">' +
             '<div class="profile-header"><div class="avatar">' + initials(currentUser.name) + '</div>' +
             '<div><h2>' + escapeHTML(currentUser.name) + '</h2>' +
@@ -3404,18 +3209,28 @@
             '<button class="btn btn-outline" onclick="logout()">Sign Out</button></div>';
         return html;
     }
-    function updateProfile(event) {
+    async function updateProfile(event) {
         event.preventDefault();
         var newName = document.getElementById("profile-name").value.trim();
-        if (!newName) {
+        if (!newName || !currentUser) {
             showToast("Name cannot be empty.", true);
             return;
         }
-        currentUser.name = newName;
-        saveData();
-        renderApp();
-        showToast("Profile updated successfully.");
+        try {
+            var result = await db.from("profiles")
+                .update({ full_name: newName }).eq("id", currentUser.id).select().single();
+            if (result.error) {
+                throw result.error;
+            }
+            currentUser.name = result.data.full_name;
+            renderApp();
+            showToast("Profile updated successfully.");
+        }
+        catch (error) {
+            showToast(error.message || "Could not update profile.", true);
+        }
     }
+
     // 11. Start the application, including saved-session restoration.
     window.addEventListener("hashchange", function () {
         if (!currentUser) {
@@ -3425,49 +3240,29 @@
         currentPage = canOpenPage(requested) ? requested : "dashboard";
         renderApp();
     });
-    // A sign-out in another tab immediately removes access in this tab.
-    window.addEventListener("storage", function (event) {
-        if (event.key === "uc_users_v1" && event.newValue) {
-            try {
-                var changedUsers = JSON.parse(event.newValue);
-                if (Array.isArray(changedUsers)) {
-                    users = changedUsers;
-                }
-            }
-            catch (error) { /* Ignore invalid data from another tab. */ }
-        }
-        if ((event.key === SESSION_KEY || event.key === "uc_users_v1") && !temporarySession) {
-            var restored = readDemoSession();
-            if (!restored || !currentUser || restored.id !== currentUser.id) {
-                currentUser = null;
-                currentPage = "dashboard";
-                renderApp();
-            }
-            else {
-                currentUser = restored;
-                if (!canOpenPage(currentPage)) {
-                    currentPage = "dashboard";
-                }
-                scheduleSessionExpiry();
-                renderApp();
-            }
-        }
-    });
-    window.addEventListener("pageshow", function (event) {
-        if (event.persisted) {
-            currentUser = readDemoSession();
-            if (currentUser && !canOpenPage(currentPage)) {
-                currentPage = "dashboard";
-            }
-            scheduleSessionExpiry();
-            renderApp();
-        }
-    });
+    // Supabase Auth handles session changes across tabs.
+    // Refresh fresh server data when returning to this tab. No polling is needed.
     document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState === "visible" && currentUser && !temporarySession) {
-            renderApp();
+        if (document.visibilityState === "visible" && currentUser) {
+            refreshProfile().then(function () {
+                return refreshRemoteData();
+            }).catch(function () {
+                showToast("Unable to refresh data. Try again when connected.", true);
+            });
         }
     });
+
+    // Staff can refresh without leaving the management screen.
+    async function refreshOrders() {
+        try {
+            await refreshRemoteData();
+            showToast("Latest orders loaded.");
+        }
+        catch (error) {
+            showToast(error.message || "Unable to refresh orders.", true);
+        }
+    }
+
     initializeApp();
   </script>
 </body>
